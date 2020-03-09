@@ -53,6 +53,22 @@ app.post('/login', (req, res) => {
 
 // post to sketchart user
 
+//1.  API FUNCTION  GET 
+app.get('/allusers', async (req, res) => {
+
+    try {
+        // throw new Error("product not found !"); 
+        const allusers = await User.find()
+            .catch(err => res.send(`products not found : ${err.message}`))
+        console.log(allusers);
+        res.send(allusers);
+    } catch (ex) {
+        winston.error(ex.message, ex);
+        next(ex);
+    }
+})
+
+
 //2. API FUNCTION PUT Update Product
 app.post('/add', user , async (req, res) => {
 
