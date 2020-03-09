@@ -1,0 +1,3 @@
+{
+    "dbconn" : "mongodb+srv://sketchart:sketchart123@cluster0-aronb.mongodb.net/sketchart?retryWrites=true"
+}
