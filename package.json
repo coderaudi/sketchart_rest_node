@@ -24,7 +24,7 @@
     "jsonwebtoken": "^8.5.1",
     "jwt-decode": "^2.2.0",
     "lodash": "^4.17.15",
-    "mongoose": "^5.4.21",
+    "mongoose": "^5.7.5",
     "supertest": "^4.0.2",
     "winston": "^3.2.1"
   }
