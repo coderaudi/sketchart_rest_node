@@ -1,19 +1,31 @@
 const jwt = require('jsonwebtoken'); // to check the valid user
 
 
-module.exports = function (req ,res, next){
 
-    let token = req.header('token'); // form user req header
-    let secret_key = "secretkey";
-    console.log("token" ,token);
-    
-   if(!token) return res.send("no token provided to user  ")
+module.exports = function (req, res, next) {
 
-    const decoded = jwt.verify(token, secret_key);  // verification signature
+    const BearerHeader = req.headers['authorization'];
+    if (typeof BearerHeader !== 'undefined') {
+        const bearer = BearerHeader.split(' ');
+        const bearerToken = bearer[1];
+        req.token = bearerToken;
 
-    if(!decoded.user.isAdmin){
-        res.send("hey you are not admin !!!")
+        jwt.verify(req.token, 'secretkey', (err, authData) => {
+            if (err) {
+                res.sendStatus(403);
+            } else {
+                if(authData.user.isAdmin){
+                    next(); // pass the control to the next
+                }else{
+                    res.sendStatus(401);
+                }
+               
+            }
+        });
+       
+    } else {
+        res.sendStatus(403);
     }
 
-    next(); // pass the control to the next
+  
 }

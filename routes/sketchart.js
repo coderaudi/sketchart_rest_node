@@ -3,11 +3,12 @@
 const mongoose = require('mongoose');
 const jwt = require('jsonwebtoken');
 let _ = require('lodash');
+const cors = require('cors');
 
 const express = require('express');
 const app = express.Router();
 app.use(express.json()); //  middleware function
-
+app.use(cors()); // to handle all the req
 const user = require('../modules/user')
 const admin = require('../modules/admin')
 const superadmin = require('../modules/superadmin')
@@ -36,31 +37,41 @@ const Gallary = mongoose.model('sketchart_gallary', userSchema); // collection c
 //2. API FUNCTION PUT Update Product
 app.post('/login', (req, res) => {
     // Mock user
-    const user = {
-      id: 1, 
-      username: 'brad',
-      email: 'brad@gmail.com',
-      isAdmin : false
-    }
-  
-    jwt.sign({user}, 'secretkey', { expiresIn: '8000s' }, (err, token) => {
-      res.json({
-        token
-      });
-    });
+    const {email, password} = req.body;
+
+        const user = {
+            id: 1, 
+            username: 'audi',
+            email: 'audi@gmail.com',
+            isUser : true,
+            isAdmin : true
+          }
+        
+          jwt.sign({user : user}, 'secretkey',  (err, token) => {
+           
+          if(email == "audi@gmail.com"){
+            res.json({
+                token 
+              });
+          }else{
+            res.send("no access !! ");
+          }
+
+          });
+
   });
 
 
 // post to sketchart user
 
 //1.  API FUNCTION  GET 
-app.get('/allusers', async (req, res) => {
+app.get('/allusers', user,  async (req, res) => {
 
     try {
         // throw new Error("product not found !"); 
         const allusers = await User.find()
             .catch(err => res.send(`products not found : ${err.message}`))
-        console.log(allusers);
+        // console.log(allusers);
         res.send(allusers);
     } catch (ex) {
         winston.error(ex.message, ex);
