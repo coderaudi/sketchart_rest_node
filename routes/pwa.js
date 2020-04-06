@@ -123,9 +123,11 @@ app.post('/notifyAllUsers', async (req, res) => {
         const all_subscribers = await Subscriber.find()
             .catch(err => res.send(`products not found : ${err.message}`));
 
-        allUser = all_subscribers;
+        allUser = _.uniqBy(all_subscribers, function (e) {
+            return e.key_auth;
+        })
 
-        all_subscribers.forEach(function (subscription) {
+        allUser.forEach(function (subscription) {
 
             let payload = JSON.stringify({
                 title: req.body.title ? req.body.title : "node Title",

@@ -2,7 +2,7 @@
 const winston = require('winston');
 const mobile = require('./routes/mobile');
 const sketchart = require('./routes/sketchart');
-const cors = require('cors')
+const cors = require('cors');
 
 const pwa = require('./routes/pwa');
 require('./startup/db')();
