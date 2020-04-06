@@ -2,6 +2,7 @@
 const winston = require('winston');
 const mobile = require('./routes/mobile');
 const sketchart = require('./routes/sketchart');
+const cors = require('cors')
 
 const pwa = require('./routes/pwa');
 require('./startup/db')();
@@ -13,6 +14,9 @@ app.use(express.json()); //  middleware function
 app.use('/api/products', mobile);
 app.use('/api/sketchart', sketchart);
 app.use('/api/pwa', pwa);
+
+
+app.use(cors());
 
 
 app.get('/', (req, res) => {
