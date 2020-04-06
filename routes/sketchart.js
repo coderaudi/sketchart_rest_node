@@ -4,6 +4,10 @@ const mongoose = require('mongoose');
 const jwt = require('jsonwebtoken');
 let _ = require('lodash');
 const cors = require('cors');
+const https = require('https');
+const webPush = require('web-push');
+
+
 
 const express = require('express');
 const app = express.Router();
@@ -13,7 +17,7 @@ const user = require('../modules/user')
 const admin = require('../modules/admin')
 const superadmin = require('../modules/superadmin')
 
-const {validateMobileProduct , validateSketchartUser} = require('../validate')
+const { validateMobileProduct, validateSketchartUser } = require('../validate')
 
 
 // need schema to  create the json db structure
@@ -31,41 +35,141 @@ const Gallary = mongoose.model('sketchart_gallary', userSchema); // collection c
 
 
 
+
+// api regarding notification push ;
+// to check the public and private key you need to run  ?
+
+
+// Public Key:
+// BCj54G9kp6-MuxVje45_rEdNd24WnFaDLOquVDqrdeqGy_NwwaeTovYJoKdP429zTri6hqypw4TXKMFF6a57aMQ
+
+// Private Key:
+// GpfiXbQhSh0PUQwULe4WOH0XZbI8lwNjT01acjA1Wv4
+//******************************************* */
+// Generate VAPID Keys
+// The web-push library relies on a set of VAPID keys to work. VAPID keys are a pair of public and private keys which is used to restrict the validity of a push subscription to a specific application server, and also to identify the server that is sending the push notifications.
+
+// You can generate the VAPID key pair by running the command below from the root of your project directory:
+
+//     ./node_modules/.bin/web-push generate-vapid-keys
+
+
+
+const publicVapidKey = "BCj54G9kp6-MuxVje45_rEdNd24WnFaDLOquVDqrdeqGy_NwwaeTovYJoKdP429zTri6hqypw4TXKMFF6a57aMQ";
+const privateVapidKey = "GpfiXbQhSh0PUQwULe4WOH0XZbI8lwNjT01acjA1Wv4";
+
+webPush.setVapidDetails('mailto:test@example.com', publicVapidKey, privateVapidKey);
+
+
+
+app.get('/notification', (req, res) => {
+    res.send({
+        message: "all ok wokring"
+    });
+})
+
+
+
+app.post('/subscribe', (req, res) => {
+    const subscription = req.body
+
+    console.log("yes visited the server subscribetion!!!")
+
+    res.status(201).json({
+        message: "you received new notification from server"
+    });
+
+    const payload = JSON.stringify({
+        title: "the notification from the server",
+        icon: "https://cdn.pixabay.com/photo/2015/12/04/14/05/code-1076536__340.jpg",
+        body: "this is the <p> for the server notification"
+    });
+
+    webPush.sendNotification(subscription, payload)
+        .catch(error => console.error(error));
+
+});
+
+
+app.post('/notifyAllUsers', (req, res) => {
+
+    let allSubscribers = [
+        {
+            endpoint: 'https://fcm.googleapis.com/fcm/send/ehUn52whVAA:APA91bFCl2CgS_2ziiaJIpgir4VIre08hS3y_U5RhSb8Z5ID5Z_O5u7-kkxoXUQQRKmZY1P953PWWnOnkC8BoCjBECh5CcdBCsNaR5KPiiuRP65VVaSPm7fFBPa651pXCmOAxctT5TI1',
+            expirationTime: null,
+            keys: {
+                p256dh: 'BBPRmfNXOGjEr5bG-kOlfw_Aq2Qh_mQ0pHJE-GctYVwlKyjZc1N2LwVBoPk-xKkX-mYIa7ncwbhQ82nrmuRcQmI',
+                auth: 'nne2k_kpVmmbn9IglGEyxQ'
+            }
+        },
+        {
+            endpoint: 'https://fcm.googleapis.com/fcm/send/ehUn52whVAA:APA91bFCl2CgS_2ziiaJIpgir4VIre08hS3y_U5RhSb8Z5ID5Z_O5u7-kkxoXUQQRKmZY1P953PWWnOnkC8BoCjBECh5CcdBCsNaR5KPiiuRP65VVaSPm7fFBPa651pXCmOAxctT5TI1',
+            expirationTime: null,
+            keys: {
+                p256dh: 'BBPRmfNXOGjEr5bG-kOlfw_Aq2Qh_mQ0pHJE-GctYVwlKyjZc1N2LwVBoPk-xKkX-mYIa7ncwbhQ82nrmuRcQmI',
+                auth: 'nne2k_kpVmmbn9IglGEyxQ'
+            }
+        }
+
+    ];
+
+
+    allSubscribers.forEach(function (subscription) {
+
+        let payload = JSON.stringify({
+            title: req.body.title ? req.body.title : "node Title",
+            body: req.body.body ? req.body.body : "node Body server..."
+        });
+
+        webPush.sendNotification(subscription, payload)
+            .catch(error => console.error(error));
+
+    });
+
+    res.status(201).json({
+        message: "notification to allSubscribers ",
+        sendTo: allSubscribers
+    });
+
+})
+
 // login 
+
+
 
 
 //2. API FUNCTION PUT Update Product
 app.post('/login', (req, res) => {
     // Mock user
-    const {email, password} = req.body;
+    const { email, password } = req.body;
 
-        const user = {
-            id: 1, 
-            username: 'audi',
-            email: 'audi@gmail.com',
-            isUser : true,
-            isAdmin : true
-          }
-        
-          jwt.sign({user : user}, 'secretkey',  (err, token) => {
-           
-          if(email == "audi@gmail.com"){
+    const user = {
+        id: 1,
+        username: 'audi',
+        email: 'audi@gmail.com',
+        isUser: true,
+        isAdmin: true
+    }
+
+    jwt.sign({ user: user }, 'secretkey', (err, token) => {
+
+        if (email == "audi@gmail.com") {
             res.json({
-                token 
-              });
-          }else{
+                token
+            });
+        } else {
             res.send("no access !! ");
-          }
+        }
 
-          });
+    });
 
-  });
+});
 
 
 // post to sketchart user
 
 //1.  API FUNCTION  GET 
-app.get('/allusers', user,  async (req, res) => {
+app.get('/allusers', user, async (req, res) => {
 
     try {
         // throw new Error("product not found !"); 
@@ -81,10 +185,10 @@ app.get('/allusers', user,  async (req, res) => {
 
 
 //2. API FUNCTION PUT Update Product
-app.post('/add', user , async (req, res) => {
+app.post('/add', user, async (req, res) => {
 
     try {
-      //  user object validation 
+        //  user object validation 
         // const { error } = validateSketchartUser(req.body); // object distructor like result.error
         // if (error) {
         //     // 400 bad req invalid input data
@@ -92,12 +196,12 @@ app.post('/add', user , async (req, res) => {
         //     return;
         // }
 
-      //  lodash is used to pick up the req.body prop it is same as underscore lib
+        //  lodash is used to pick up the req.body prop it is same as underscore lib
 
         const user = new User(
-            (_.pick(req.body , ['username' , 'useremail']))  )
+            (_.pick(req.body, ['username', 'useremail'])))
 
-           
+
         // const user = new User( {
         //     username : req.body.username ? req.body.username : "def_username" ,
         //     useremail : req.body.useremail ? req.body.useremail : "def@gmal.com"
@@ -120,11 +224,11 @@ app.post('/add', user , async (req, res) => {
 // post  pic 
 
 
-app.post('/pic' , async (req, res) => {
+app.post('/pic', async (req, res) => {
 
     try {
-    
-        let img =  {
+
+        let img = {
             src: "https://mymodernmet.com/wp/wp-content/uploads/2019/03/elements-of-art-6.jpg",
             alt: "img-title",
             description: "Some quick example text to build on the card title and make up the bulk of the card's content.",
@@ -133,11 +237,11 @@ app.post('/pic' , async (req, res) => {
         };
 
         let gallaryAry = Array(50).fill(img);
-        const gallary = new Gallary({ gallary : gallaryAry})
+        const gallary = new Gallary({ gallary: gallaryAry })
 
         const result = await gallary.save()
         res.send(result);
-    
+
         next();
 
     } catch (ex) {
