@@ -45,10 +45,12 @@ const Subscriber = mongoose.model('pwa_subscriber', subscriberSchema); // collec
 //     ./node_modules/.bin/web-push generate-vapid-keys
 
 
-const publicVapidKey = "BF18kPvOgCP0yPXaMKLlB2EfJGKnQX0xPFfhbKaFS5wzmhIq8pAy6u1Au4zALvGsdqHeF9N_0yxHaYS9f50cH84";
-const privateVapidKey = "S0tEeLKOxnJXO47jR1FHEWihwgYlWf75d2J9vas5kx4";
 
-webPush.setVapidDetails('mailto:test@example.com', publicVapidKey, privateVapidKey);
+
+const publicVapidKey = "BEpDSsZVhZZMyeIrJ4FuUjza6JG0d6dTfG0oEvzaiOyOQ9ed0VkwA7EJZ1zso0jwij_cUpOLKG5OP-0a02rUUpM";
+const privateVapidKey = "AoftMvr0UEFlxcDvsPvQMQaV3YBI7ndfhm1YOkvawyI";
+
+webPush.setVapidDetails('mailto:abhijeetkhire@gmail.com', publicVapidKey, privateVapidKey);
 
 
 app.get('/', (req, res) => {
@@ -58,9 +60,21 @@ app.get('/', (req, res) => {
 })
 
 
-app.get('/notification', (req, res) => {
+app.post('/notification', (req, res) => {
+    const subscription = req.body
+    const payload = JSON.stringify({
+        title: "PWA NOTIFICATION SUBSCRIBED SUCC",
+        icon: "https://cdn.pixabay.com/photo/2015/12/04/14/05/code-1076536__340.jpg",
+        body: `EVERYTHING IS ALL WOKRING FINE `
+    });
+
+    webPush.sendNotification(subscription, payload)
+        .catch(error => {
+            console.error("FAIL TO SEND NOTIFICATION", error)
+        });
+
     res.send({
-        message: "all ok wokring"
+        subscription, payload
     });
 })
 
@@ -134,6 +148,7 @@ app.get('/subscribers', async (req, res) => {
 })
 
 app.post('/notifyAllUsers', async (req, res) => {
+
 
     let allUser = [];
     try {
