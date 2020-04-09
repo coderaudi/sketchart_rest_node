@@ -47,8 +47,8 @@ const Subscriber = mongoose.model('pwa_subscriber', subscriberSchema); // collec
 
 
 
-const publicVapidKey = "BEpDSsZVhZZMyeIrJ4FuUjza6JG0d6dTfG0oEvzaiOyOQ9ed0VkwA7EJZ1zso0jwij_cUpOLKG5OP-0a02rUUpM";
-const privateVapidKey = "AoftMvr0UEFlxcDvsPvQMQaV3YBI7ndfhm1YOkvawyI";
+const publicVapidKey = "BCj54G9kp6-MuxVje45_rEdNd24WnFaDLOquVDqrdeqGy_NwwaeTovYJoKdP429zTri6hqypw4TXKMFF6a57aMQ";
+const privateVapidKey = "GpfiXbQhSh0PUQwULe4WOH0XZbI8lwNjT01acjA1Wv4";
 
 webPush.setVapidDetails('mailto:abhijeetkhire@gmail.com', publicVapidKey, privateVapidKey);
 
