@@ -33,7 +33,7 @@ const Subscriber = mongoose.model('pwa_subscriber', subscriberSchema); // collec
 
 // Public Key:
 // BCj54G9kp6-MuxVje45_rEdNd24WnFaDLOquVDqrdeqGy_NwwaeTovYJoKdP429zTri6hqypw4TXKMFF6a57aMQ
-
+// 
 // Private Key:
 // GpfiXbQhSh0PUQwULe4WOH0XZbI8lwNjT01acjA1Wv4
 //******************************************* */
@@ -45,8 +45,8 @@ const Subscriber = mongoose.model('pwa_subscriber', subscriberSchema); // collec
 //     ./node_modules/.bin/web-push generate-vapid-keys
 
 
-const publicVapidKey = "BCj54G9kp6-MuxVje45_rEdNd24WnFaDLOquVDqrdeqGy_NwwaeTovYJoKdP429zTri6hqypw4TXKMFF6a57aMQ";
-const privateVapidKey = "GpfiXbQhSh0PUQwULe4WOH0XZbI8lwNjT01acjA1Wv4";
+const publicVapidKey = "BF18kPvOgCP0yPXaMKLlB2EfJGKnQX0xPFfhbKaFS5wzmhIq8pAy6u1Au4zALvGsdqHeF9N_0yxHaYS9f50cH84";
+const privateVapidKey = "S0tEeLKOxnJXO47jR1FHEWihwgYlWf75d2J9vas5kx4";
 
 webPush.setVapidDetails('mailto:test@example.com', publicVapidKey, privateVapidKey);
 
