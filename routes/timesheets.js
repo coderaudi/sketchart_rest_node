@@ -60,6 +60,8 @@ app.get('/:id', async (req, res) => {
 
 
 app.post('/add', async (req, res) => {
+
+    console.log("add new tiemsheet", req.body);
     try {
         const timesheet = new Timesheet(
             (_.pick(req.body,

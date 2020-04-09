@@ -18,7 +18,7 @@ const { validateMobileProduct, validateSketchartUser } = require('../validate')
 // need schema to  create the json db structure
 const subscriberSchema = new mongoose.Schema({
     // mongoose validation 
-    endpoint: { type: String, required: true },
+    endpoint: { type: String, required: true, unique: true },
     expirationTime: { type: String },
     key_p256dh: { type: String, required: true },
     key_auth: { type: String, required: true }
@@ -43,7 +43,6 @@ const Subscriber = mongoose.model('pwa_subscriber', subscriberSchema); // collec
 // You can generate the VAPID key pair by running the command below from the root of your project directory:
 
 //     ./node_modules/.bin/web-push generate-vapid-keys
-
 
 
 const publicVapidKey = "BCj54G9kp6-MuxVje45_rEdNd24WnFaDLOquVDqrdeqGy_NwwaeTovYJoKdP429zTri6hqypw4TXKMFF6a57aMQ";
@@ -114,6 +113,25 @@ app.post('/subscribe', async (req, res) => {
 
 });
 
+
+app.get('/subscribers', async (req, res) => {
+    let allUser = [];
+
+    try {
+        // throw new Error("product not found !"); 
+        const all_subscribers = await Subscriber.find()
+            .catch(err => res.send(`products not found : ${err.message}`));
+
+        allUser = _.uniqBy(all_subscribers, function (e) {
+            return e.key_auth;
+        })
+
+        res.status(201).json(allUser);
+    } catch (ex) {
+        next(ex);
+    }
+
+})
 
 app.post('/notifyAllUsers', async (req, res) => {
 
